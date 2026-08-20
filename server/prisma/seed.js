@@ -7,30 +7,21 @@ const prisma = new PrismaClient();
 const slug = (s) => slugify(s, { lower: true, strict: true });
 const key = (s) => slugify(s, { lower: true, strict: true, replacement: '_' });
 
-// Reliable Unsplash fashion photos (editorial women's fashion).
+// Product images: real Daisy photos, served by the frontend from
+// /public/images. Hero + editorial stay as placeholders until real ones arrive.
 const IMG = {
-  blouse1: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=900&q=80',
-  blouse2: 'https://images.unsplash.com/photo-1551803091-e20673f15770?w=900&q=80',
-  top1: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&q=80',
-  top2: 'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=900&q=80',
-  pants1: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=900&q=80',
-  pants2: 'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=900&q=80',
-  dress1: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=900&q=80',
-  dress2: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=900&q=80',
-  dress3: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=900&q=80',
-  skirt1: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=900&q=80',
-  skirt2: 'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=900&q=80',
-  suit1: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&q=80',
-  suit2: 'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?w=900&q=80',
-  modest1: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=900&q=80',
-  modest2: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=900&q=80',
-  cat_blouse: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=600&q=80',
-  cat_top: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&q=80',
-  cat_pants: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&q=80',
-  cat_dress: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80',
-  cat_skirt: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=600&q=80',
-  cat_suit: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80',
-  cat_modest: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80',
+  blouse1: '/images/blouses/blouse1.png',
+  blouse2: '/images/blouses/blouse2.png',
+  blouse3: '/images/blouses/blouse3.png',
+  dress1: '/images/dress/drees1.png',
+  dress2: '/images/dress/dress2.png',
+  pants1: '/images/pants/pants1.png',
+  pants2: '/images/pants/pants2.png',
+  pants3: '/images/pants/pants3.png',
+  skirt1: '/images/skirts/skirt1.png',
+  suit1: '/images/sutes/suet1.png',
+  suit2: '/images/sutes/suet2.png',
+  // placeholders (kept until real ones are provided)
   hero1: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80',
   hero2: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=80',
   hero3: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80',
@@ -96,13 +87,11 @@ async function main() {
 
   // ---- Categories ----
   const catDefs = [
-    ['Blouses', 'بلوزات', IMG.cat_blouse, 'Elegant blouses for every occasion', 'بلوزات أنيقة لكل المناسبات'],
-    ['Tops', 'توبات', IMG.cat_top, 'Everyday tops and essentials', 'توبات يومية أساسية'],
-    ['Pants', 'بناطيل', IMG.cat_pants, 'Tailored and casual pants', 'بناطيل كاجوال ومفصلة'],
-    ['Dresses', 'فساتين', IMG.cat_dress, 'Dresses for day and evening', 'فساتين للنهار والسهرة'],
-    ['Skirts', 'جيبات', IMG.cat_skirt, 'Flowing and structured skirts', 'جيبات انسيابية ومنظمة'],
-    ['Suits', 'بدل', IMG.cat_suit, 'Refined two-piece suits', 'بدل راقية من قطعتين'],
-    ['Modest Wear', 'ملابس محتشمة', IMG.cat_modest, 'Modest, elegant pieces', 'قطع محتشمة وأنيقة'],
+    ['Blouses', 'بلوزات', IMG.blouse1, 'Elegant blouses for every occasion', 'بلوزات أنيقة لكل المناسبات'],
+    ['Dresses', 'فساتين', IMG.dress1, 'Dresses for day and evening', 'فساتين للنهار والسهرة'],
+    ['Pants', 'بناطيل', IMG.pants1, 'Tailored and casual pants', 'بناطيل كاجوال ومفصلة'],
+    ['Skirts', 'جيبات', IMG.skirt1, 'Flowing and structured skirts', 'جيبات انسيابية ومنظمة'],
+    ['Suits', 'بدل', IMG.suit1, 'Refined two-piece suits', 'بدل راقية من قطعتين'],
   ];
   const categories = {};
   for (let i = 0; i < catDefs.length; i++) {
@@ -159,12 +148,10 @@ async function main() {
     for (const f of fields) await prisma.categoryField.create({ data: { categoryId: cat.id, fieldId: f.field.id } });
   }
   await attach(categories['Blouses'], [size, color, material, fit, sleeve]);
-  await attach(categories['Tops'], [size, color, material, fit]);
-  await attach(categories['Pants'], [size, color, length, material, fit]);
   await attach(categories['Dresses'], [size, color, fabric, length, sleeve]);
+  await attach(categories['Pants'], [size, color, length, material, fit]);
   await attach(categories['Skirts'], [size, color, length, material]);
   await attach(categories['Suits'], [size, color, material, fit]);
-  await attach(categories['Modest Wear'], [size, color, fabric, length, sleeve]);
 
   // ---- Product creation helper ----
   let seq = 0;
@@ -217,23 +204,23 @@ async function main() {
   await createProduct({
     nameEn: 'Linen Wrap Blouse', nameAr: 'بلوزة كتان لف', category: categories['Blouses'],
     descEn: 'Breathable linen wrap blouse with a flattering tie waist.', descAr: 'بلوزة كتان بقصة لف وخصر مربوط أنيق.',
-    price: 650, featured: true, images: [IMG.blouse2, IMG.blouse1],
+    price: 650, featured: true, images: [IMG.blouse3],
     attributes: [{ field: material, option: material.options['Linen'] }, { field: fit, option: fit.options['Relaxed'] }, { field: sleeve, option: sleeve.options['Short Sleeve'] }],
     variants: grid(['Beige', 'Olive'], ['S', 'M', 'L'], () => 4),
   });
   await createProduct({
-    nameEn: 'Ribbed Knit Top', nameAr: 'توب تريكو مضلع', category: categories['Tops'],
-    descEn: 'A fitted ribbed knit top — a wardrobe essential in soft neutrals.', descAr: 'توب تريكو مضلع بقصة ضيقة — قطعة أساسية بألوان هادئة.',
-    price: 420, isNew: true, bestSeller: true, soldCount: 40, images: [IMG.top1, IMG.top2],
-    attributes: [{ field: material, option: material.options['Cotton'] }, { field: fit, option: fit.options['Slim'] }],
-    variants: grid(['Black', 'White', 'Brown'], ['S', 'M', 'L'], () => 8),
+    nameEn: 'Satin Slip Dress', nameAr: 'فستان ساتان انسيابي', category: categories['Dresses'],
+    descEn: 'A bias-cut satin slip dress that catches the light beautifully.', descAr: 'فستان ساتان بقصة مائلة ينساب بجمال مع الضوء.',
+    price: 1250, salePrice: 990, featured: true, isNew: true, images: [IMG.dress1],
+    attributes: [{ field: fabric, option: fabric.options['Satin'] }, { field: length, option: length.options['Maxi'] }, { field: sleeve, option: sleeve.options['Sleeveless'] }],
+    variants: grid(['Beige', 'Black'], ['S', 'M', 'L', 'XL'], (c, sz) => (sz === 'M' ? 3 : 5)),
   });
   await createProduct({
-    nameEn: 'Cotton Poplin Top', nameAr: 'توب قطن بوبلين', category: categories['Tops'],
-    descEn: 'Crisp cotton poplin top with a clean, minimal cut.', descAr: 'توب قطن بوبلين بقصة نظيفة وبسيطة.',
-    price: 380, salePrice: 300, images: [IMG.top2, IMG.top1],
-    attributes: [{ field: material, option: material.options['Cotton'] }, { field: fit, option: fit.options['Regular'] }],
-    variants: grid(['White', 'Beige'], ['S', 'M', 'L', 'XL'], () => 5),
+    nameEn: 'Midi Wrap Dress', nameAr: 'فستان ميدي لف', category: categories['Dresses'],
+    descEn: 'A timeless midi wrap dress with a soft flowing skirt.', descAr: 'فستان ميدي بقصة لف كلاسيكية وتنورة انسيابية.',
+    price: 1100, bestSeller: true, soldCount: 28, images: [IMG.dress2],
+    attributes: [{ field: fabric, option: fabric.options['Jersey'] }, { field: length, option: length.options['Midi'] }, { field: sleeve, option: sleeve.options['Long Sleeve'] }],
+    variants: grid(['Black', 'Brown', 'Olive'], ['S', 'M', 'L'], () => 4),
   });
   await createProduct({
     nameEn: 'High-Waist Tailored Pants', nameAr: 'بنطلون مفصل بخصر عالي', category: categories['Pants'],
@@ -245,37 +232,16 @@ async function main() {
   await createProduct({
     nameEn: 'Wide-Leg Linen Pants', nameAr: 'بنطلون كتان واسع', category: categories['Pants'],
     descEn: 'Relaxed wide-leg linen pants — cool, elegant and easy to wear.', descAr: 'بنطلون كتان واسع ومريح — أنيق وسهل الارتداء.',
-    price: 690, salePrice: 550, isNew: true, images: [IMG.pants2, IMG.pants1],
+    price: 690, salePrice: 550, isNew: true, images: [IMG.pants3],
     attributes: [{ field: material, option: material.options['Linen'] }, { field: fit, option: fit.options['Relaxed'] }, { field: length, option: length.options['Full'] }],
     variants: grid(['Beige', 'Olive'], ['S', 'M', 'L'], () => 6),
   });
   await createProduct({
-    nameEn: 'Satin Slip Dress', nameAr: 'فستان ساتان انسيابي', category: categories['Dresses'],
-    descEn: 'A bias-cut satin slip dress that catches the light beautifully.', descAr: 'فستان ساتان بقصة مائلة ينساب بجمال مع الضوء.',
-    price: 1250, salePrice: 990, featured: true, isNew: true, images: [IMG.dress1, IMG.dress2],
-    attributes: [{ field: fabric, option: fabric.options['Satin'] }, { field: length, option: length.options['Maxi'] }, { field: sleeve, option: sleeve.options['Sleeveless'] }],
-    variants: grid(['Beige', 'Black'], ['S', 'M', 'L', 'XL'], (c, sz) => (sz === 'M' ? 3 : 5)),
-  });
-  await createProduct({
-    nameEn: 'Midi Wrap Dress', nameAr: 'فستان ميدي لف', category: categories['Dresses'],
-    descEn: 'A timeless midi wrap dress with a soft flowing skirt.', descAr: 'فستان ميدي بقصة لف كلاسيكية وتنورة انسيابية.',
-    price: 1100, bestSeller: true, soldCount: 28, images: [IMG.dress2, IMG.dress3],
-    attributes: [{ field: fabric, option: fabric.options['Jersey'] }, { field: length, option: length.options['Midi'] }, { field: sleeve, option: sleeve.options['Long Sleeve'] }],
-    variants: grid(['Black', 'Brown', 'Olive'], ['S', 'M', 'L'], () => 4),
-  });
-  await createProduct({
     nameEn: 'Pleated Maxi Skirt', nameAr: 'جيبة ماكسي بليسيه', category: categories['Skirts'],
     descEn: 'A fluid pleated maxi skirt that moves with you.', descAr: 'جيبة ماكسي بليسيه انسيابية تتحرك معكِ برشاقة.',
-    price: 720, isNew: true, images: [IMG.skirt1, IMG.skirt2],
+    price: 720, isNew: true, featured: true, images: [IMG.skirt1],
     attributes: [{ field: material, option: material.options['Chiffon'] }, { field: length, option: length.options['Maxi'] }],
     variants: grid(['Beige', 'Black', 'Olive'], ['S', 'M', 'L'], () => 5),
-  });
-  await createProduct({
-    nameEn: 'A-Line Midi Skirt', nameAr: 'جيبة ميدي كلوش', category: categories['Skirts'],
-    descEn: 'A structured A-line midi skirt in a versatile neutral.', descAr: 'جيبة ميدي كلوش منظمة بلون محايد عملي.',
-    price: 560, salePrice: 450, images: [IMG.skirt2, IMG.skirt1],
-    attributes: [{ field: material, option: material.options['Crepe'] }, { field: length, option: length.options['Midi'] }],
-    variants: grid(['Black', 'Brown'], ['S', 'M', 'L', 'XL'], () => 6),
   });
   await createProduct({
     nameEn: 'Two-Piece Blazer Suit', nameAr: 'بدلة بليزر قطعتين', category: categories['Suits'],
@@ -284,26 +250,12 @@ async function main() {
     attributes: [{ field: material, option: material.options['Crepe'] }, { field: fit, option: fit.options['Slim'] }],
     variants: grid(['Beige', 'Black'], ['S', 'M', 'L', 'XL'], () => 3),
   });
-  await createProduct({
-    nameEn: 'Modest Abaya Dress', nameAr: 'عباية فستان محتشم', category: categories['Modest Wear'],
-    descEn: 'A flowing modest maxi dress with full-length sleeves and elegant drape.', descAr: 'فستان محتشم ماكسي بأكمام طويلة وانسيابية أنيقة.',
-    price: 1350, isNew: true, featured: true, images: [IMG.modest1, IMG.modest2],
-    attributes: [{ field: fabric, option: fabric.options['Satin'] }, { field: length, option: length.options['Maxi'] }, { field: sleeve, option: sleeve.options['Long Sleeve'] }],
-    variants: grid(['Beige', 'Black', 'Brown'], ['S', 'M', 'L', 'XL'], () => 5),
-  });
-  await createProduct({
-    nameEn: 'Modest Kimono Set', nameAr: 'طقم كيمونو محتشم', category: categories['Modest Wear'],
-    descEn: 'A layered modest kimono set in soft neutral tones.', descAr: 'طقم كيمونو محتشم بطبقات وألوان هادئة.',
-    price: 990, salePrice: 790, bestSeller: true, soldCount: 22, images: [IMG.modest2, IMG.modest1],
-    attributes: [{ field: fabric, option: fabric.options['Knit'] }, { field: length, option: length.options['Full'] }, { field: sleeve, option: sleeve.options['Long Sleeve'] }],
-    variants: grid(['Beige', 'Olive'], ['S', 'M', 'L'], () => 4),
-  });
 
   // ---- Hero banners ----
   const heroBanners = [
     { image: IMG.hero1, labelEn: 'New Collection', labelAr: 'تشكيلة جديدة', titleEn: 'Elegance in Every Detail', titleAr: 'الأناقة في كل التفاصيل', subtitleEn: 'Discover the pieces defining this season', subtitleAr: 'اكتشفي القطع التي تُعرّف هذا الموسم', ctaTextEn: 'Shop Collection', ctaTextAr: 'تسوقي التشكيلة', ctaLink: '/shop', displayOrder: 0 },
     { image: IMG.hero2, labelEn: 'The Daisy Edit', labelAr: 'مختارات ديزي', titleEn: 'Effortless, Timeless, Yours', titleAr: 'بسيطة، خالدة، لكِ', subtitleEn: 'Refined essentials for the modern woman', subtitleAr: 'أساسيات راقية للمرأة العصرية', ctaTextEn: 'Explore Dresses', ctaTextAr: 'اكتشفي الفساتين', ctaLink: '/category/dresses', displayOrder: 1 },
-    { image: IMG.hero3, labelEn: 'Modest Edit', labelAr: 'مجموعة الاحتشام', titleEn: 'Grace, Reimagined', titleAr: 'الرقيّ بأسلوب جديد', subtitleEn: 'Modest pieces designed to move with you', subtitleAr: 'قطع محتشمة مصممة لتتحرك معكِ', ctaTextEn: 'Shop Modest', ctaTextAr: 'تسوقي المحتشم', ctaLink: '/category/modest-wear', displayOrder: 2 },
+    { image: IMG.hero3, labelEn: 'The Edit', labelAr: 'المجموعة', titleEn: 'Grace, Reimagined', titleAr: 'الرقيّ بأسلوب جديد', subtitleEn: 'Elegant pieces designed to move with you', subtitleAr: 'قطع أنيقة مصممة لتتحرك معكِ', ctaTextEn: 'Shop Now', ctaTextAr: 'تسوقي الآن', ctaLink: '/shop', displayOrder: 2 },
   ];
   for (const b of heroBanners) await prisma.heroBanner.create({ data: b });
 

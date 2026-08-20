@@ -40,6 +40,14 @@ const IMG = {
 async function main() {
   console.log('Seeding Daisy database...');
 
+  // Safety guard: on a database that already has data, skip seeding so that
+  // production redeploys never wipe real orders/products. Force with FORCE_SEED=true.
+  const existing = await prisma.category.count().catch(() => 0);
+  if (existing > 0 && process.env.FORCE_SEED !== 'true') {
+    console.log('Database already has data — skipping seed. (Set FORCE_SEED=true to reseed.)');
+    return;
+  }
+
   // ---- Reset (safe order) ----
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();

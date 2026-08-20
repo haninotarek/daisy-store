@@ -47,7 +47,7 @@
 
 /* drawer */
 .drawer-overlay { position: fixed; inset: 0; background: rgba(40,36,37,0.4); z-index: 1100; }
-.drawer { position: fixed; top: 0; inset-inline-start: 0; height: 100%; width: min(320px, 85vw); background: var(--surface); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; padding: 18px; }
+.drawer { position: fixed; top: 0; inset-inline-start: 0; height: 100vh; height: 100dvh; width: min(320px, 85vw); background: var(--surface); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; padding: 18px; z-index: 1101; overflow: hidden; }
 .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .drawer-links { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
 .drawer-links > a { padding: 12px 8px; font-size: 1rem; border-radius: var(--radius-sm); color: var(--text-strong); }

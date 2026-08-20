@@ -42,6 +42,7 @@ export default function Navbar() {
   };
 
   return (
+    <>
     <header className={`nav ${scrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-inner container">
         {/* left: mobile menu / desktop links */}
@@ -96,8 +97,12 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* mobile drawer */}
-      {menuOpen && (
+    </header>
+
+    {/* mobile drawer — rendered OUTSIDE <header> so its `position: fixed` is
+        relative to the viewport, not the header's backdrop-filter box (which
+        would otherwise collapse the drawer to the header's height) */}
+    {menuOpen && (
         <div className="drawer-overlay" onClick={() => setMenuOpen(false)}>
           <aside className="drawer fade-in" onClick={(e) => e.stopPropagation()}>
             <div className="drawer-head">
@@ -125,6 +130,6 @@ export default function Navbar() {
           </aside>
         </div>
       )}
-    </header>
+    </>
   );
 }

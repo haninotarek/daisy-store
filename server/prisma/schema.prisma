@@ -1,0 +1,321 @@
+// Daisy e-commerce schema.
+// Provider is SQLite for zero-config local dev. To move to Postgres:
+//   1. change provider to "postgresql"
+//   2. set DATABASE_URL to your Postgres connection string
+//   3. run `npx prisma migrate deploy`
+// The schema is written to be portable (no SQLite-only features, JSON stored
+// as strings, no DB enums).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         String     @default("CUSTOMER") // CUSTOMER | ADMIN
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  cart         Cart?
+  wishlist     WishlistItem[]
+  orders       Order[]
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  nameEn       String
+  nameAr       String
+  descEn       String   @default("")
+  descAr       String   @default("")
+  image        String?
+  banner       String?
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  products     Product[]
+  fields       CategoryField[]
+  heroBanners  HeroBanner[]
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  nameEn       String
+  nameAr       String
+  descEn       String   @default("")
+  descAr       String   @default("")
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  price        Float
+  salePrice    Float?
+  hasVariants  Boolean  @default(false)
+  stock        Int      @default(0)   // used when hasVariants = false
+  active       Boolean  @default(true)
+  featured     Boolean  @default(false)
+  isNew        Boolean  @default(false)
+  bestSeller   Boolean  @default(false)
+  soldCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  images       ProductImage[]
+  fieldValues  ProductFieldValue[]
+  variants     ProductVariant[]
+  orderItems   OrderItem[]
+  cartItems    CartItem[]
+  heroBanners  HeroBanner[]
+
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id           String  @id @default(cuid())
+  productId    String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url          String
+  displayOrder Int     @default(0)
+  isMain       Boolean @default(false)
+}
+
+// ---- Flexible attribute system ----
+
+model ProductField {
+  id           String   @id @default(cuid())
+  nameEn       String
+  nameAr       String
+  key          String   @unique
+  type         String   // TEXT | NUMBER | SELECT | MULTISELECT | BOOLEAN | COLOR | SIZE | IMAGE
+  required     Boolean  @default(false)
+  filterable   Boolean  @default(false)
+  usedForVariants Boolean @default(false)
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  options      ProductFieldOption[]
+  categories   CategoryField[]
+  values       ProductFieldValue[]
+  variantOptions VariantOption[]
+}
+
+model ProductFieldOption {
+  id           String  @id @default(cuid())
+  fieldId      String
+  field        ProductField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  valueEn      String
+  valueAr      String
+  colorHex     String?
+  displayOrder Int     @default(0)
+
+  values         ProductFieldValue[]
+  variantOptions VariantOption[]
+}
+
+// Which fields apply to which category
+model CategoryField {
+  id         String   @id @default(cuid())
+  categoryId String
+  fieldId    String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  field      ProductField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, fieldId])
+}
+
+// A product's value for a given field (non-variant attributes, e.g. Material)
+model ProductFieldValue {
+  id         String   @id @default(cuid())
+  productId  String
+  fieldId    String
+  optionId   String?
+  valueText  String?  // for TEXT/NUMBER/BOOLEAN, or multi-select as JSON array
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  field      ProductField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  option     ProductFieldOption? @relation(fields: [optionId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([fieldId])
+}
+
+// A concrete purchasable combination (e.g. Beige / M)
+model ProductVariant {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku        String?
+  stock      Int      @default(0)
+  priceOverride Float?
+  label      String   @default("") // human readable e.g. "Beige / M"
+  options    VariantOption[]
+
+  cartItems  CartItem[]
+  @@index([productId])
+}
+
+model VariantOption {
+  id        String   @id @default(cuid())
+  variantId String
+  fieldId   String
+  optionId  String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  field     ProductField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  option    ProductFieldOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+}
+
+// ---- Cart ----
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id         String   @id @default(cuid())
+  cartId     String
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId  String?
+  variant    ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  quantity   Int      @default(1)
+  createdAt  DateTime @default(now())
+}
+
+// ---- Wishlist ----
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// ---- Orders (with snapshots) ----
+
+model Order {
+  id           String   @id @default(cuid())
+  orderNumber  String   @unique
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerName String
+  phone        String
+  governorate  String
+  city         String
+  address      String
+  notes        String   @default("")
+  subtotal     Float
+  deliveryFee  Float
+  total        Float
+  currency     String   @default("EGP")
+  status       String   @default("PENDING") // PENDING | CONFIRMED | PREPARING | SHIPPED | DELIVERED | CANCELLED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  items        OrderItem[]
+  @@index([userId])
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId    String?
+  // snapshot fields (immutable record of what was bought)
+  nameEn       String
+  nameAr       String
+  image        String?
+  variantLabel String   @default("")
+  attributes   String   @default("[]") // JSON snapshot of selected attributes
+  unitPrice    Float
+  quantity     Int
+  lineTotal    Float
+}
+
+// ---- Homepage / merchandising ----
+
+model HeroBanner {
+  id           String   @id @default(cuid())
+  image        String
+  labelEn      String   @default("")
+  labelAr      String   @default("")
+  titleEn      String   @default("")
+  titleAr      String   @default("")
+  subtitleEn   String   @default("")
+  subtitleAr   String   @default("")
+  ctaTextEn    String   @default("")
+  ctaTextAr    String   @default("")
+  ctaLink      String   @default("")
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+}
+
+model HomepageSection {
+  id           String   @id @default(cuid())
+  key          String   @unique // categories | featured | new | bestsellers | sale | editorial
+  type         String   // CATEGORIES | PRODUCTS | EDITORIAL
+  titleEn      String   @default("")
+  titleAr      String   @default("")
+  subtitleEn   String   @default("")
+  subtitleAr   String   @default("")
+  config       String   @default("{}") // JSON: filter, image, ctaText, ctaLink, limit
+  visible      Boolean  @default(true)
+  displayOrder Int      @default(0)
+}
+
+model StoreSetting {
+  id               Int    @id @default(1)
+  storeName        String @default("Daisy")
+  logo             String @default("/uploads/logo.png")
+  whatsapp         String @default("")
+  instagram        String @default("")
+  facebook         String @default("")
+  phone            String @default("")
+  email            String @default("")
+  address          String @default("")
+  deliveryFee      Float  @default(50)
+  currency         String @default("EGP")
+  lowStockThreshold Int   @default(5)
+}
+
+model Policy {
+  id        String @id @default(cuid())
+  key       String @unique // shipping | return | privacy | terms
+  titleEn   String
+  titleAr   String
+  contentEn String @default("")
+  contentAr String @default("")
+}
+
+// Per-governorate delivery fee. Falls back to StoreSetting.deliveryFee when a
+// governorate has no row / is inactive.
+model GovernorateFee {
+  id           String  @id @default(cuid())
+  nameEn       String
+  nameAr       String
+  fee          Float   @default(50)
+  active       Boolean @default(true)
+  displayOrder Int     @default(0)
+}

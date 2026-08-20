@@ -1,0 +1,120 @@
+/* ============ Toast ============ */
+.toast-host { position: fixed; bottom: 24px; inset-inline: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3000; pointer-events: none; }
+.toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; background: var(--text-strong); color: #fff; padding: 12px 20px; border-radius: var(--radius-pill); box-shadow: var(--shadow-lg); font-size: 0.9rem; animation: toastIn 0.3s ease; max-width: 90vw; cursor: pointer; }
+[data-theme='dark'] .toast { background: var(--accent); color: var(--accent-contrast); }
+.toast-error { background: var(--danger); color: #fff; }
+.toast-icon { display: flex; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+/* ============ Product Card ============ */
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(14px, 2.4vw, 30px); }
+@media (min-width: 640px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.pcard { display: block; position: relative; }
+.pcard-media { position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: var(--radius); background: var(--bg-subtle); }
+.pcard-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease, transform 0.9s ease; }
+.pcard-img-hover { opacity: 0; }
+.pcard:hover .pcard-img-hover { opacity: 1; }
+.pcard:hover .pcard-img { transform: scale(1.04); }
+.pcard-badges { position: absolute; top: 10px; inset-inline-start: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+.pcard-wish { position: absolute; top: 10px; inset-inline-end: 10px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: var(--daisy-grey); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: all var(--transition); }
+[data-theme='dark'] .pcard-wish { background: rgba(38, 35, 36, 0.85); color: var(--text); }
+.pcard-wish:hover { transform: scale(1.08); }
+.pcard-wish.active { color: var(--daisy-brown); }
+.pcard-action { position: absolute; bottom: 0; inset-inline: 0; padding: 10px; transform: translateY(120%); transition: transform 0.35s ease; z-index: 2; }
+.pcard:hover .pcard-action { transform: none; }
+.pcard-body { padding: 14px 2px 4px; text-align: center; }
+.pcard-cat { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+.pcard-name { font-family: var(--font-serif); font-size: 1.12rem; margin: 3px 0 6px; color: var(--text-strong); font-weight: 500; line-height: 1.25; }
+.pcard .price { justify-content: center; display: flex; align-items: baseline; font-size: 0.98rem; }
+@media (max-width: 500px) { .pcard-action { transform: none; position: static; padding: 8px 0 0; } .pcard-name { font-size: 1rem; } }
+
+/* ============ Badges tweak ============ */
+.badge { line-height: 1; }
+
+/* ============ Swatches & options ============ */
+.swatch-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border-strong); cursor: pointer; position: relative; transition: transform var(--transition); box-shadow: inset 0 0 0 2px var(--surface); }
+.swatch:hover { transform: scale(1.1); }
+.swatch.active { box-shadow: inset 0 0 0 2px var(--surface), 0 0 0 2px var(--accent); }
+.swatch-lg { width: 34px; height: 34px; }
+.swatch.disabled { opacity: 0.35; }
+.option-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.option-chip { padding: 8px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); font-size: 0.85rem; color: var(--text); transition: all var(--transition); display: inline-flex; align-items: center; gap: 6px; background: var(--surface); }
+.option-chip:hover { border-color: var(--accent); }
+.option-chip.active { background: var(--daisy-grey); color: #fff; border-color: var(--daisy-grey); }
+[data-theme='dark'] .option-chip.active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.option-chip.disabled { opacity: 0.4; text-decoration: line-through; }
+.attr-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 1px solid var(--border-strong); }
+
+/* ============ Quantity selector ============ */
+.qty-selector { display: inline-flex; align-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); overflow: hidden; }
+.qty-selector button { width: 42px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background var(--transition); }
+.qty-selector button:hover:not(:disabled) { background: var(--bg-subtle); }
+.qty-selector button:disabled { opacity: 0.35; }
+.qty-selector span { min-width: 40px; text-align: center; font-weight: 500; }
+.qty-sm button { width: 34px; height: 34px; }
+.qty-sm span { min-width: 32px; }
+
+/* ============ Modal ============ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(40, 36, 37, 0.5); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 2500; }
+.modal { background: var(--surface); border-radius: var(--radius-lg); padding: 26px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; }
+.modal-lg { max-width: 720px; }
+.modal h3 { font-size: 1.3rem; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.modal-body { margin-top: 4px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+/* ============ Uploader ============ */
+.uploader-drop { border: 1.5px dashed var(--border-strong); border-radius: var(--radius); padding: 26px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-muted); cursor: pointer; transition: all var(--transition); text-align: center; font-size: 0.88rem; }
+.uploader-drop:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-subtle); }
+.uploader-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin-top: 12px; }
+.uploader-thumb { position: relative; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); cursor: grab; }
+.uploader-thumb.is-main { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.uploader-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.uploader-thumb-actions { position: absolute; top: 4px; inset-inline-end: 4px; display: flex; gap: 4px; opacity: 0; transition: opacity var(--transition); }
+.uploader-thumb:hover .uploader-thumb-actions { opacity: 1; }
+.uploader-thumb-actions button { width: 26px; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.92); color: var(--daisy-grey); display: flex; align-items: center; justify-content: center; }
+.uploader-thumb-actions button.active { color: var(--daisy-brown); }
+.uploader-main-badge { position: absolute; bottom: 4px; inset-inline-start: 4px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; background: var(--accent); color: var(--accent-contrast); padding: 2px 6px; border-radius: 4px; }
+
+/* ============ Pagination ============ */
+.pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 40px; }
+.page-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 0.9rem; transition: all var(--transition); border: 1px solid transparent; }
+.page-btn:hover:not(:disabled) { border-color: var(--border-strong); }
+.page-btn.active { background: var(--daisy-grey); color: #fff; }
+[data-theme='dark'] .page-btn.active { background: var(--accent); color: var(--accent-contrast); }
+.page-btn:disabled { opacity: 0.3; }
+.page-ellipsis { color: var(--text-muted); padding: 0 4px; }
+
+/* ============ Breadcrumb ============ */
+.breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb .current { color: var(--text-strong); }
+.crumb { display: inline-flex; align-items: center; gap: 4px; }
+.crumb-sep { display: inline-flex; opacity: 0.6; }
+
+/* ============ Empty state ============ */
+.empty-state { text-align: center; padding: 70px 20px; max-width: 440px; margin: 0 auto; }
+.empty-icon { width: 76px; height: 76px; border-radius: 50%; background: var(--bg-subtle); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.empty-state h3 { font-size: 1.5rem; margin-bottom: 8px; }
+.empty-state p { margin-bottom: 22px; }
+
+/* ============ Status badge ============ */
+.status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; letter-spacing: 0.04em; font-weight: 500; padding: 5px 12px; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--sc) 14%, transparent); color: var(--sc); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sc); }
+
+/* ============ Spinner ============ */
+.spinner-center { display: flex; justify-content: center; padding: 80px 0; color: var(--accent); }
+
+/* ============ Check row ============ */
+.check-row { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; color: var(--text); }
+.check-row input[type='checkbox'] { width: 17px; height: 17px; accent-color: var(--daisy-brown); cursor: pointer; }
+
+/* ============ Toggle switch ============ */
+.toggle { width: 42px; height: 24px; border-radius: 999px; background: var(--border-strong); position: relative; transition: background var(--transition); flex-shrink: 0; }
+.toggle span { position: absolute; top: 3px; inset-inline-start: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform var(--transition); }
+.toggle.on { background: var(--success); }
+.toggle.on span { transform: translateX(18px); }
+[dir='rtl'] .toggle.on span { transform: translateX(-18px); }

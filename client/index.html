@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F3EFF0" />
+    <meta name="description" content="Daisy — elegant women's fashion. Blouses, dresses, pants, modest wear and more." />
+    <meta property="og:title" content="Daisy — Women's Fashion" />
+    <meta property="og:description" content="Elegant women's fashion. Effortless, timeless, yours." />
+    <meta property="og:image" content="/logo.png" />
+    <meta property="og:type" content="website" />
+    <title>Daisy — Women's Fashion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Apply saved theme + language before first paint (no flash of wrong theme).
+      (function () {
+        try {
+          var t = localStorage.getItem('daisy_theme') || 'light';
+          var l = localStorage.getItem('daisy_lang') || 'en';
+          var r = document.documentElement;
+          r.setAttribute('data-theme', t);
+          r.setAttribute('lang', l);
+          r.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr');
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

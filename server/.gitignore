@@ -1,0 +1,8 @@
+node_modules
+.env
+dev.db
+dev.db-journal
+uploads/*
+!uploads/.gitkeep
+!uploads/logo.png
+prisma/migrations

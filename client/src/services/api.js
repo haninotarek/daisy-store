@@ -1,5 +1,8 @@
 // Centralized API layer. All network calls go through request().
-const BASE = '/api';
+// In production (Vercel) VITE_API_URL points at the Render backend; in local
+// dev it is empty and Vite proxies /api and /uploads to localhost:5000.
+const API_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const BASE = `${API_ORIGIN}/api`;
 
 let authToken = localStorage.getItem('daisy_token') || null;
 export function setToken(t) {
@@ -30,7 +33,12 @@ async function request(path, { method = 'GET', body, headers = {}, isForm = fals
   } catch {
     throw new ApiError('Network error. Please check your connection.', 0);
   }
-  const text = await res.text();
+  let text = await res.text();
+  // Rewrite relative /uploads image paths to absolute backend URLs so images
+  // stored on the API server render correctly from the Vercel-hosted frontend.
+  if (API_ORIGIN && text.includes('"/uploads/')) {
+    text = text.split('"/uploads/').join(`"${API_ORIGIN}/uploads/`);
+  }
   const data = text ? JSON.parse(text) : {};
   if (!res.ok) {
     if (res.status === 401 && onUnauthorized) onUnauthorized();

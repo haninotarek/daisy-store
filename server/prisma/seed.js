@@ -24,8 +24,8 @@ const IMG = {
   // placeholders (kept until real ones are provided)
   hero1: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80',
   hero2: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=80',
-  hero3: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80',
-  editorial: 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=1200&q=80',
+  hero3: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=1600&q=80',
+  editorial: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1200&q=80',
 };
 
 async function main() {

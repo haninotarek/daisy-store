@@ -18,7 +18,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 app.set('trust proxy', 1);
-app.use(cors({ origin: process.env.CLIENT_URL?.split(',') || '*' }));
+// CORS: if CLIENT_URL is unset or "*", reflect any origin; otherwise allow the
+// listed comma-separated origins (trailing slashes tolerated).
+const clientUrl = process.env.CLIENT_URL?.trim();
+const corsOrigin = !clientUrl || clientUrl === '*'
+  ? true
+  : clientUrl.split(',').map((s) => s.trim().replace(/\/$/, ''));
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(express.json({ limit: '2mb' }));
 
 // Serve locally-stored uploads (skipped when Cloudinary is used).
